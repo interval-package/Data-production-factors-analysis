@@ -14,6 +14,23 @@ import re
 import os
 
 
+import pdfplumber
+import pandas as pd
+
+
+def read_pdf(read_path, save_path):
+    pdf_2020 = pdfplumber.open(read_path)
+    result_df = pd.DataFrame()
+    for page in pdf_2020.pages:
+        table = page.extract_table()
+        print(table)
+        df_detail = pd.DataFrame(table[1:], columns=table[0])
+        result_df = pd.concat([df_detail, result_df], ignore_index=True)
+    result_df.dropna(axis=1, how='all', inplace=True)
+    result_df.columns = ['奖项', '作品编号', '作品名称', '参赛学校', '作者', '指导老师']
+    result_df.to_excel(excel_writer=save_path, index=False, encoding='utf-8')
+
+
 def to_pic(doc, zoom, pg, pic_path):
     """
     将单页pdf转换为pic
