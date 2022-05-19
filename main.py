@@ -1,5 +1,6 @@
-from Mining.Plumber_Mining import *
+# from Mining.Plumber_Mining import *
 import pickle
+from NetData_req.FetchData import *
 
 
 def readFile():
@@ -9,12 +10,8 @@ def readFile():
 
 
 if __name__ == '__main__':
-    for pdf in get_pdf_name():
-        print(pdf)
-        obj = PdfPlumberMiner(pdf, "./res.xlsx")
-        obj.bf_mining(obj.deep_analyze)
-        obj.disp_self_res()
-        with open("obj.pickle", "wb") as out:
-            pickle.dump(obj, out)
-        input()
+    codes = get_codes()
+    # req_profit_data(codes)
+    # req_operation_data(codes)
+    req_performance_express_report()
     pass
