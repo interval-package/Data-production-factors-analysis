@@ -1,9 +1,11 @@
 import baostock as bs
 import pandas as pd
 import xlrd
-from DataBase.DataBaseReader import *
+import os.path as path
 
-output = DataBaseReader()
+# from DataBase.DataBaseReader import *
+
+# output = DataBaseReader()
 
 func_dict_data = {
     "profit_data": bs.query_profit_data,
@@ -16,7 +18,7 @@ func_dict_report = {
 
 
 def get_codes():
-    workBook = xlrd.open_workbook("./NetData_req/data.xls")
+    workBook = xlrd.open_workbook(path.join(".", "DataBase", "NetData_req", "data.xls"))
     sheet1_content1 = workBook.sheets()[0]
     cols = sheet1_content1.col_values(0)
     return cols[1:]

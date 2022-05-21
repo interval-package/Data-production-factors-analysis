@@ -1,19 +1,23 @@
 # from Mining.Plumber_Mining import *
+import os
+from DataBase.NetData_req.FetchData import *
+from DataBase.Load_csv_Data import read_csv_data
+from DataBase.NetData_req.tushare_home import get_fina_main
 import pickle
-from NetData_req.FetchData import *
-from NetData_req.akshare_home import *
 
 
-def readFile():
-    with open("obj.pickle", "rb") as p_in:
-        obj = pickle.load(p_in)
-    return obj
+def main():
+    codes = get_codes()
+
+    res = dict()
+
+    for code in codes:
+        res[code] = read_csv_data(code)
+    pass
+
+    print(res)
 
 
 if __name__ == '__main__':
-    codes = get_codes()
-    # req_profit_data(codes)
-    # req_operation_data(codes)
-    # req_performance_express_report()
-    ak_analyze(["300380"])
+    main()
     pass
