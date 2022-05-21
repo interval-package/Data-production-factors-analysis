@@ -10,7 +10,6 @@ def k_means_business(weight):
     clf = KMeans(n_clusters=5)
     res = clf.fit(weight)
     print(res)
-    # 20个中心点
     print(clf.cluster_centers_)
     # 每个样本所属的簇
     print(clf.labels_)

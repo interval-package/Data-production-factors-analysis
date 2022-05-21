@@ -12,9 +12,12 @@ from Analysis_Stage.clustering.clustering_business import *
 def main():
     obj = FactorProcess()
     obj.process_factor_encode()
-    weight = obj.extract_info_Ti_Dif()
+    obj.process_time_factor_encode()
+    obj.clustering()
+    # weight = obj.extract_ti_idf_time()
     # print(weight)
-    k_means_business(weight)
+    # k_means_business(weight)
+    # print(obj.insight_tab)
     # DBSCAN_business(weight)
     pass
 
