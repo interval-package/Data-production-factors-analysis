@@ -5,17 +5,18 @@ from DataBase.Load_csv_Data import read_csv_data
 from DataBase.NetData_req.tushare_home import get_fina_main
 import pickle
 
+from Process_Site.main_prof.proess_factors import FactorProcess
+from Analysis_Stage.clustering.clustering_business import *
+
 
 def main():
-    codes = get_codes()
-
-    res = dict()
-
-    for code in codes:
-        res[code] = read_csv_data(code)
+    obj = FactorProcess()
+    obj.process_factor_encode()
+    weight = obj.extract_info_Ti_Dif()
+    # print(weight)
+    k_means_business(weight)
+    # DBSCAN_business(weight)
     pass
-
-    print(res)
 
 
 if __name__ == '__main__':
