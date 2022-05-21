@@ -6,8 +6,6 @@ import gensim
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 
-from Analysis_Stage.clustering.clustering_business import *
-
 from sklearn.cluster import KMeans
 
 
