@@ -22,6 +22,13 @@ def main():
     pass
 
 
+def preloading_data():
+    codes = get_codes()
+    for code in codes:
+        get_fina_main(code)
+
+
 if __name__ == '__main__':
-    main()
+    # main()
+    preloading_data()
     pass
