@@ -14,7 +14,7 @@
 
 在网络上找了半天，找了例如`baostock`以及`akshare`等开源数据平台，虽然都很全面，但是就是主营业务的信息一直没有搞到。
 
-所以最后使用了`tushare`来获得该方面数据
+所以最后使用了`tushare`来获得该方面数据，`tushare`官网：https://tushare.pro
 
 我们选择了推荐的80家公司，对其历史信息业务信息进行获取，然后保存在本地。
 
@@ -25,6 +25,37 @@ def get_fina_main(code, stock_type=".SZ"):
     df.to_csv("../data/main_prof/{}.csv".format(code), encoding="utf-8", index=False)
     return df
 ```
+
+### 如何配置数据环境
+
+这里的话，从git上clone下来是没有带有数据的，所以需要进行一个初始化，在共做目录创建文件夹：
+
+```python
+"../data/main/prof"
+
+from DataBase.NetData_req.FetchData import *
+from DataBase.Load_csv_Data import read_csv_data
+from DataBase.NetData_req.tushare_home import get_fina_main
+
+from Process_Site.main_prof.proess_factors import FactorProcess
+
+def main():
+    pass
+
+
+def preloading_data():
+    codes = get_codes()
+    for code in codes:
+        get_fina_main(code)
+
+
+if __name__ == '__main__':
+    # main()
+    preloading_data()
+    pass
+```
+
+运行，然后就从`tushare`下载好了。
 
 ## 数据分析与模型构建
 
@@ -64,3 +95,30 @@ def get_fina_main(code, stock_type=".SZ"):
 - `dbscan 密度聚类`
 
 详细的算法内容，这里就不再进行解释。
+
+对于类型的基本标签，我们可以认为，对于进行信息化的企业，可以分为以下大类：
+
+| type           | 特征 | 分析 |
+| -------------- | ---- | ---- |
+| 数字产品制造业 |      |      |
+| 数字产品服务业 |      |      |
+| 数字技术应用业 |      |      |
+| 数字要输驱动业 |      |      |
+
+可以看出不同公司的主营业务内容具有一定的区分性，同时一个公司在不同时间段内，进行的主营业务内容也有较大的区分。通过业务分类的标签变化，可以直观地了解到公司的战略变化。
+
+### 阶段二：比对业务投入比划分行业行为特征
+
+对于我们的营业数据，我们会又三个大方面的指标：
+
+- 投资金额 $C_{invest}$
+- 销售金额 $C_{sale}$
+- 营收金额 $C_{prof}$
+
+设立投资比例系数${\phi}_{fac_{sale}} = C_{sale}/C_{invest}$，${\phi}_{fac_{prof}} = C_{prof}/C_{invest}$认为该比例系数可以反映一个公司对于某个业务的重视程度，以及一定时间段内，公司的投资策略特征。
+
+我们取一段时间内，各公司的该两个系数的平均值，作为我们聚类的向量元素，再次进行聚类分析，划分不同公司在某一时刻的投资策略特征。
+
+与上一阶段的特征，进行比对，确认公司在主营业务变化时，所进行的投资策略的变化。
+
+### 阶段三：使用DID-PSM进行前后影响分析

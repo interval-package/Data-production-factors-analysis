@@ -11,9 +11,14 @@ from Analysis_Stage.clustering.clustering_business import *
 
 def main():
     obj = FactorProcess()
-    obj.process_factor_encode()
-    obj.process_time_factor_encode()
-    obj.clustering()
+    obj.process_invest_percent()
+    # print(obj.invest_mat)
+    obj.clustering_invest_info()
+    # print(obj.invest_mat)
+    # print(obj.invest_header)
+    # obj.process_factor_encode()
+    # obj.process_time_factor_encode()
+    # obj.clustering()
     # weight = obj.extract_ti_idf_time()
     # print(weight)
     # k_means_business(weight)
@@ -29,6 +34,6 @@ def preloading_data():
 
 
 if __name__ == '__main__':
-    # main()
-    preloading_data()
+    main()
+    # preloading_data()
     pass

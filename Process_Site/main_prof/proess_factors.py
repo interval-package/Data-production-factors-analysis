@@ -24,7 +24,9 @@ class FactorProcess:
         "tags": [],
     }
 
-    encode_weight = None
+    invest_mat = []
+
+    invest_header = []
 
     def __init__(self):
         self.data = read_bz_main_total()
@@ -33,7 +35,7 @@ class FactorProcess:
     def process_factor_encode(self):
         """
         :return: there is no return, but store the data to the member 'tag'
-        : this function is to  concat all the type info to one string list
+        :info this function is to  concat all the type info to one string list
         """
         for code, df in zip(self.codes, self.data.values()):
             res = df[self.tar_clo].tolist()
@@ -64,13 +66,25 @@ class FactorProcess:
     def process_invest_percent(self):
         """
         :return: the processed data of invest
-        : this function is to
+        : this function is to process the profit data
         """
+
+        def avg(val: list):
+            return sum(val) / len(val)
+
         for code, df in zip(self.codes, self.data.values()):
             df["ave_invest"] = df["bz_profit"] / df["bz_cost"]
-            res = df[[self.date_clo, "ave_invest"]]
-            res = list(res.groupby(self.date_clo))
-
+            df["ave_sale"] = df["bz_sales"] / df["bz_cost"]
+            res = df[[self.date_clo, "ave_invest", "ave_sale"]].dropna()
+            print(res)
+            tar_1 = res.groupby(self.date_clo).ave_invest.apply(list).to_dict()
+            tar_2 = res.groupby(self.date_clo).ave_sale.apply(list).to_dict()
+            # union dict
+            # tar = {**tar_1, **tar_2}
+            # tar = tar_1 | tar_2  # for py ver >= 3.9
+            for key, value_1, value_2 in zip(tar_1.keys(), tar_2.values(), tar_2.values()):
+                self.invest_mat.append([avg(value_1), avg(value_2)])
+                self.invest_header.append(str(code) + "+" + str(key))
         pass
 
     def extract_info_Ti_Dif(self):
@@ -95,11 +109,27 @@ class FactorProcess:
         x_train_weight = tf_idf.toarray()
         return x_train_weight
 
-    def clustering(self):
+    def clustering_type_info(self):
         weight = self.extract_ti_idf_time()
 
-        clf = KMeans(n_clusters=5)
+        clf = KMeans(n_clusters=7)
         res = clf.fit(weight)
+        print(res)
+        print("the center:")
+        print(clf.cluster_centers_)
+        # 每个样本所属的簇
+        for name, tag in zip(self.invest_header, clf.labels_):
+            print(name + ": " + str(tag))
+        return
+
+    def clustering_invest_info(self):
+        if not self.invest_mat:
+            self.process_invest_percent()
+
+        # print(self.invest_mat)
+
+        clf = KMeans(n_clusters=10)
+        res = clf.fit(self.invest_mat)
         print(res)
         print("the center:")
         print(clf.cluster_centers_)
