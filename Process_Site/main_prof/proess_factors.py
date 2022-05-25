@@ -8,6 +8,8 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 from sklearn.cluster import KMeans
 
+import numpy as np
+
 
 class FactorProcess:
     tar_clo = "bz_item"
@@ -32,7 +34,7 @@ class FactorProcess:
         self.data = read_bz_main_total()
         self.codes = self.data.keys()
 
-    def process_factor_encode(self):
+    def process_factor_encode_type_overall(self):
         """
         :return: there is no return, but store the data to the member 'tag'
         :info this function is to  concat all the type info to one string list
@@ -44,7 +46,11 @@ class FactorProcess:
             self.tags.append(code)
         pass
 
-    def process_time_factor_encode(self):
+    def process_factor_encode_type_by_time(self):
+        """
+        :return: there is no return, but store the data to the member 'tag'
+        :info: this function is to  concat all the info of a period into one string list
+        """
         for code, df in zip(self.codes, self.data.values()):
             res = df[[self.date_clo, self.tar_clo]]
             res = res.groupby(self.date_clo).bz_item.apply(list).to_dict()
@@ -65,7 +71,7 @@ class FactorProcess:
 
     def process_invest_percent(self):
         """
-        :return: the processed data of invest
+        :return: the processed data of invest, store res in invest_mat
         : this function is to process the profit data
         """
 
@@ -76,7 +82,6 @@ class FactorProcess:
             df["ave_invest"] = df["bz_profit"] / df["bz_cost"]
             df["ave_sale"] = df["bz_sales"] / df["bz_cost"]
             res = df[[self.date_clo, "ave_invest", "ave_sale"]].dropna()
-            print(res)
             tar_1 = res.groupby(self.date_clo).ave_invest.apply(list).to_dict()
             tar_2 = res.groupby(self.date_clo).ave_sale.apply(list).to_dict()
             # union dict
@@ -87,7 +92,25 @@ class FactorProcess:
                 self.invest_header.append(str(code) + "+" + str(key))
         pass
 
-    def extract_info_Ti_Dif(self):
+    type_list = ["ts_code", "end_date", "bz_item", "curr_type", "update_flag"]
+
+    @staticmethod
+    def _normalize(x):
+        if x.name in FactorProcess.type_list:
+            return x
+        try:
+            y = (x - np.min(x)) / (np.max(x) - np.min(x))
+            return y
+        except Exception as e:
+            print(repr(e))
+            # print(x.name)
+            return x
+
+    def process_factor_tagging(self):
+
+        return
+
+    def extract_Ti_Dif_overall(self):
         # 该类会将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
         vectorizer = CountVectorizer(max_features=10)
         # 该类会统计每个词语的tf-idf权值
@@ -114,26 +137,39 @@ class FactorProcess:
 
         clf = KMeans(n_clusters=7)
         res = clf.fit(weight)
-        print(res)
+        # print(res)
         print("the center:")
         print(clf.cluster_centers_)
         # 每个样本所属的簇
-        for name, tag in zip(self.invest_header, clf.labels_):
-            print(name + ": " + str(tag))
-        return
+        res = pd.DataFrame({"tags": self.tags_time, "type": list(clf.labels_)})
+        return res.set_index("tags")
 
     def clustering_invest_info(self):
         if not self.invest_mat:
             self.process_invest_percent()
-
         # print(self.invest_mat)
 
         clf = KMeans(n_clusters=10)
         res = clf.fit(self.invest_mat)
-        print(res)
+        # print(res)
         print("the center:")
         print(clf.cluster_centers_)
         # 每个样本所属的簇
-        for name, tag in zip(self.insight_tab["tags"], clf.labels_):
-            print(name + ": " + str(tag))
+        res = pd.DataFrame({"tags": self.invest_header, "invest": list(clf.labels_)})
+        return res.set_index("tags")
+
+    cluster_res_path = "../data/cluster_res.csv"
+
+    def save_cluster_res(self):
+        self.process_factor_encode_type_by_time()
+        self.process_invest_percent()
+        print(len(self.tags_time), len(self.invest_header))
+        df_2 = self.clustering_type_info()
+        df_1 = self.clustering_invest_info()
+        res = pd.concat([df_1, df_2], keys="tags", axis=1)
+        # res = df_1.join(df_2, on=["tags"])
+        print(res)
+        res.to_csv(self.cluster_res_path)
         return
+
+

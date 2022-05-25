@@ -14,6 +14,13 @@ def get_fina_main(code, stock_type=".SZ"):
     return df
 
 
+def get_main_bz_by_year(code, stock_type=".SZ", start_date="20170101"):
+    df = pro.fina_mainbz(ts_code=code + stock_type, start_date=start_date, type='P', end_type=4)
+    print(code + "finish")
+    # df.to_csv("../data/main_prof/{}.csv".format(code), encoding="utf-8", index=False)
+    return df
+
+
 def fetch_detail_factor():
     codes = get_codes()
     res = get_detail(codes[0])

@@ -26,7 +26,7 @@ def get_fina_main(code, stock_type=".SZ"):
     return df
 ```
 
-### 如何配置数据环境
+#### 如何配置数据环境
 
 这里的话，从git上clone下来是没有带有数据的，所以需要进行一个初始化，在共做目录创建文件夹：
 
@@ -34,14 +34,10 @@ def get_fina_main(code, stock_type=".SZ"):
 "../data/main/prof"
 
 from DataBase.NetData_req.FetchData import *
-from DataBase.Load_csv_Data import read_csv_data
+from DataBase.Load_csv_Data import read_main_bz_csv_data
 from DataBase.NetData_req.tushare_home import get_fina_main
 
 from Process_Site.main_prof.proess_factors import FactorProcess
-
-def main():
-    pass
-
 
 def preloading_data():
     codes = get_codes()
@@ -50,22 +46,25 @@ def preloading_data():
 
 
 if __name__ == '__main__':
-    # main()
     preloading_data()
     pass
 ```
 
 运行，然后就从`tushare`下载好了。
 
+#### 数据简单标定
+
+对于，我们对于营业业务类型先做一个简单的标定。对于有使用数据要素的，标定为1，没有使用的，标定为0。
+
 ### 营业状况数据
 
 目标内容：总资产净利率，资产负债率，存货周转率，营业外收入（政府补贴/其他收入），研发投入比，现金流能力（公司流动金额），是否使用数据要素。
 
-## 数据分析与模型构建
+# 数据分析与模型构建
 
-### 阶段一：通过主营业务类别进行行业类型划分
+## 阶段一：通过主营业务类别进行行业类型划分
 
-#### 数据编码化
+### 数据编码化
 
 对于我们获得的数据，实际上是很离散和非结构化的。
 
@@ -75,7 +74,7 @@ if __name__ == '__main__':
 
 所以我们将每个公司的业务类型进行统计，使用TF-IDF算法对我们的数据进行一个基础的预处理。
 
-##### TF-IDF算法
+#### TF-IDF算法
 
 > **TF-IDF（term frequency–inverse document frequency，词频-逆向文件频率）**是一种用于信息检索（information retrieval）与文本挖掘（text mining）的常用**加权技术**。
 >
@@ -89,7 +88,7 @@ if __name__ == '__main__':
 
 然后使用`sklearn`的api将目标的内容转化为我们所要的数据矩阵。
 
-#### 聚类分析
+### 聚类分析
 
 在这里针对上一步的分析，我们对处理好的目标数据，进行无监督聚类处理，以聚类结果作为我们划分的依据。
 
@@ -111,7 +110,7 @@ if __name__ == '__main__':
 
 可以看出不同公司的主营业务内容具有一定的区分性，同时一个公司在不同时间段内，进行的主营业务内容也有较大的区分。通过业务分类的标签变化，可以直观地了解到公司的战略变化。
 
-### 阶段二：比对业务投入比划分行业行为特征
+## 阶段二：比对业务投入比划分行业行为特征
 
 对于我们的营业数据，我们会又三个大方面的指标：
 
@@ -125,7 +124,11 @@ if __name__ == '__main__':
 
 与上一阶段的特征，进行比对，确认公司在主营业务变化时，所进行的投资策略的变化。
 
-### 阶段三：使用DID-PSM进行前后影响分析
+## 阶段三：使用PCA进行主成分分析
+
+
+
+## 阶段四：使用DID-PSM进行前后影响分析
 
 
 

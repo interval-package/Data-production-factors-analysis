@@ -24,5 +24,9 @@ def preloading_data():
 
 if __name__ == '__main__':
     # fetch_detail_factor()
-    preloading_detail_factor(is_clear=True, is_save=True)
+    # res = preloading_detail_factor()
+    # res.fillna(method="backfill", inplace=True)
+    # res.to_csv("../data/res_detail_factor.csv", index=False)
+    obj = FactorProcess()
+    obj.save_cluster_res()
     pass

@@ -9,7 +9,7 @@ detail_factor_path = "../data/res_detail_factor.csv"
 
 
 def preloading_detail_factor(is_clear=False, is_save=False):
-    _res = pd.read_csv("../data/res_detail_factor.csv")
+    _res = pd.read_csv(detail_factor_path)
     length = len(_res) * 0.8
 
     if is_clear:
@@ -27,11 +27,11 @@ def read_bz_main_total():
     codes = get_codes()
     res = dict()
     for code in codes:
-        res[code] = read_csv_data(code)
+        res[code] = read_main_bz_csv_data(code)
     return res
 
 
-def read_csv_data(code, file_dir=dir_main_prof):
+def read_main_bz_csv_data(code, file_dir=dir_main_prof):
     """
     :return: return a list of dataframe
     tar_path: the file path containing the data
