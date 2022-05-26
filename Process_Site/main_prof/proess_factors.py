@@ -91,7 +91,7 @@ class FactorProcess:
             # union dict
             # tar = {**tar_1, **tar_2}
             # tar = tar_1 | tar_2  # for py ver >= 3.9
-            for key, value_1, value_2 in zip(tar_1.keys(), tar_2.values(), tar_2.values()):
+            for key, value_1, value_2 in zip(tar_1.keys(), tar_1.values(), tar_2.values()):
                 self.invest_mat.append([avg(value_1), avg(value_2)])
                 self.invest_header.append(str(code) + "+" + str(key))
         pass
@@ -153,8 +153,14 @@ class FactorProcess:
             self.process_invest_percent()
         # print(self.invest_mat)
 
-        clf = KMeans(n_clusters=10)
-        res = clf.fit(self.invest_mat)
+        vec_s = np.array(self.invest_mat)
+
+        vec_s[vec_s > 10] = 0
+
+        print(vec_s)
+
+        clf = KMeans(n_clusters=6)
+        res = clf.fit(vec_s)
         # print(res)
         print("the center:")
         print(clf.cluster_centers_)
@@ -167,21 +173,21 @@ class FactorProcess:
     def save_cluster_res(self):
         self.process_factor_encode_type_by_time()
         self.process_invest_percent()
-        print(len(self.tags_time), len(self.invest_header))
+        # print(len(self.tags_time), len(self.invest_header))
         df_2 = self.clustering_type_info()
         df_1 = self.clustering_invest_info()
-        res = pd.concat([df_1, df_2], keys="tags", axis=1)
+        # res = pd.concat([df_1, df_2], axis=1)
         # res = df_1.join(df_2, on=["tags"])
-        print(res)
-        res.to_csv(self.cluster_res_path)
-        return
+        # print(res)
+        # res.to_csv(self.cluster_res_path)
+        return df_1, df_2
 
     def plot_k_means_res_invest(self):
         if not self.invest_mat:
             self.process_invest_percent()
 
-        # weight = self.extract_ti_idf_time()
-        weight = self.invest_mat
+        weight = self.extract_ti_idf_time()
+        # weight = self.invest_mat
 
         clf = KMeans(n_clusters=6)
         res = clf.fit(weight)

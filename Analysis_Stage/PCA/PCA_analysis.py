@@ -8,7 +8,7 @@ from Process_Site.main_prof.MainBzReTag import *
 import matplotlib.pyplot as plt
 
 
-def analysis(code, is_save=False, is_display=False):
+def PCA_analysis(code, is_save=False, is_display=False):
     info_1 = DetailData.load_csv_data(code)
     info_1 = info_1[["tags", "net_profit", "r_and_d"]]
     info_1.set_index("tags", inplace=True)

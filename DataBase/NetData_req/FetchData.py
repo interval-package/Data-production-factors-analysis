@@ -24,6 +24,19 @@ def get_codes():
     return cols[1:]
 
 
+def read_type_df():
+    workBook = pd.read_excel(io=path.join(".", "DataBase", "NetData_req", "data.xls"), sheet_name="Sheet1")
+    workBook.set_index("企业代码",inplace=True)
+    return workBook
+
+
+_work_info = read_type_df()
+
+
+def code_to_name(code):
+    return _work_info.loc[code]["企业名称"]
+
+
 tar_years = [i for i in range(2017, 2021)]
 
 
