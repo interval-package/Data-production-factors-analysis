@@ -1,5 +1,7 @@
 import pandas as pd
 import jieba
+from sklearn.metrics import pairwise_distances_argmin
+
 from DataBase.Load_csv_Data import read_bz_main_total
 # import gensim
 
@@ -9,6 +11,8 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.cluster import KMeans
 
 import numpy as np
+
+import matplotlib.pyplot as plt
 
 
 class FactorProcess:
@@ -172,4 +176,42 @@ class FactorProcess:
         res.to_csv(self.cluster_res_path)
         return
 
+    def plot_k_means_res_invest(self):
+        if not self.invest_mat:
+            self.process_invest_percent()
 
+        # weight = self.extract_ti_idf_time()
+        weight = self.invest_mat
+
+        clf = KMeans(n_clusters=6)
+        res = clf.fit(weight)
+
+        n_clusters = clf.n_clusters
+        k_means_cluster_centers = clf.cluster_centers_
+
+        colors = ["#4EACC5", "#FF9C34", "#4E9A06", "#4EACC5", "#FF9C34", "#4E9A06", "#4EACC5", "#FF9C34", "#4E9A06",
+                  "#4EACC5", "#FF9C34", "#4E9A06", "#4EACC5", "#FF9C34", "#4E9A06", "#4EACC5"]
+
+        k_means_labels = pairwise_distances_argmin(weight, k_means_cluster_centers)
+
+        print(weight)
+        X = np.array(weight)
+
+        # KMeans
+        for k, col in zip(range(n_clusters), colors):
+            my_members = (k_means_labels == k)
+            cluster_center = k_means_cluster_centers[k]
+            print(my_members)
+            plt.plot(X[my_members, 0], X[my_members, 1], ".", color=col, markersize=6)
+            # plt.plot(X[my_members, 2], X[my_members, 3], ".", color=col, markersize=6)
+            plt.plot(
+                cluster_center[0],
+                cluster_center[1],
+                "o",
+                markerfacecolor=col,
+                markeredgecolor="k",
+                markersize=10,
+            )
+        plt.show()
+
+        pass

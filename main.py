@@ -1,18 +1,50 @@
 # from Mining.Plumber_Mining import *
-import os
+import matplotlib.pyplot as plt
 
-import pandas as pd
-
-from DataBase.NetData_req.FetchData import *
-from DataBase.Load_csv_Data import *
 from DataBase.NetData_req.tushare_home import *
-import pickle
-
-from Process_Site.main_prof.proess_factors import FactorProcess
-from Analysis_Stage.clustering.clustering_business import *
+from Process_Site.main_prof.MainBzReTag import MainBzReTag
+from Analysis_Stage.PCA.PCA_analysis import *
 
 
 def main():
+    fetch_detail_factor()
+    # obj = MainBzReTag()
+    # obj.preloading()
+    # obj.total_res_connect()
+    # codes = get_codes()
+    # obj.analysis_pca(codes[0])
+    pass
+
+
+def main_2():
+    codes = get_codes()
+    count = 0
+    for code in codes:
+        print(code)
+        try:
+            res = analysis(code, is_save=True)
+
+        except Exception as e:
+            print(repr(e))
+            print(code + " invalid")
+            count += 1
+            continue
+
+    print(count)
+
+
+def main_3():
+    obj = FactorProcess()
+    obj.process_invest_percent()
+    obj.process_factor_encode_type_by_time()
+    # obj.process_factor_encode_type_overall()
+    obj.plot_k_means_res_invest()
+    pass
+
+
+def disp_res():
+
+    plt.savefig()
     pass
 
 
@@ -23,10 +55,6 @@ def preloading_data():
 
 
 if __name__ == '__main__':
-    # fetch_detail_factor()
-    # res = preloading_detail_factor()
-    # res.fillna(method="backfill", inplace=True)
-    # res.to_csv("../data/res_detail_factor.csv", index=False)
-    obj = FactorProcess()
-    obj.save_cluster_res()
+
+    main_3()
     pass
