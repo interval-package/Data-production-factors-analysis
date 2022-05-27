@@ -1,6 +1,7 @@
 # from Mining.Plumber_Mining import *
 import matplotlib.pyplot as plt
 
+from Analysis_Stage.clustering.clustering_business import inertia_calc
 from DataBase.NetData_req.FetchData import read_type_df, code_to_name
 from DataBase.NetData_req.tushare_home import *
 from Process_Site.main_prof.MainBzReTag import MainBzReTag
@@ -77,5 +78,5 @@ def preloading_data():
 if __name__ == '__main__':
     # read_type_df()
     # print(code_to_name(int("00503")))
-    main_2()
+    inertia_calc()
     pass

@@ -11,6 +11,7 @@ from sklearn.metrics.pairwise import pairwise_distances_argmin
 
 
 # ======================================================================================================================
+from Process_Site.main_prof.proess_factors import FactorProcess
 
 
 def k_means_business(weight):
@@ -69,6 +70,41 @@ def make_random_pic():
     plt.show()
 
     return
+
+
+def inertia_calc():
+    obj = FactorProcess()
+    obj.process_invest_percent()
+    obj.process_factor_encode_type_by_time()
+
+    weight = obj.extract_ti_idf_time()
+
+    SSE = []  # 存放每次结果的误差平方和
+
+    iter_times = []
+
+    centers = []
+
+    X = range(1, 16)
+
+    for i in X:  # 尝试要聚成的类数
+        estimator = KMeans(n_clusters=i)  # 构造聚类器
+        estimator.fit(weight)
+        SSE.append(estimator.inertia_)
+        iter_times.append(estimator.n_iter_)
+        centers.append(estimator.cluster_centers_)
+
+  # 跟k值要一样
+    plt.xlabel('i')
+    plt.ylabel('SSE')
+    plt.plot(X, SSE, 'o-')
+    plt.show()  # 画出图
+
+    plt.xlabel('i')
+    plt.ylabel('iter times')
+    plt.plot(X, iter_times, 'o-')
+    plt.show()  # 画出图
+    pass
 
 
 if __name__ == '__main__':
