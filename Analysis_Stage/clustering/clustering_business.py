@@ -1,4 +1,5 @@
 # dbscan 密度聚类
+import xlrd
 from matplotlib import pyplot as plt
 from sklearn.cluster import DBSCAN
 # K-means聚类
@@ -107,7 +108,29 @@ def inertia_calc():
     pass
 
 
+# ======================================================================================================================
+
+class k_means_main:
+    def __init__(self):
+        self._cur_path_load_data()
+        self.main()
+        pass
+
+    def main(self):
+        pass
+
+    def _cur_path_load_data(self):
+        try:
+            workBook = xlrd.open_workbook("../../DataBase/data/K-Means_2021.xlsx")
+        except Exception as e:
+            print(repr(e))
+            workBook = xlrd.open_workbook("./DataBase/data/K-Means_2021.xlsx")
+        sheet1_content1 = workBook.sheets()
+        print(sheet1_content1)
+        return
+
+
 if __name__ == '__main__':
-    make_random_pic()
+    k_means_main()
 
     pass
